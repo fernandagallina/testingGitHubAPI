@@ -1,8 +1,10 @@
 package fernanda.githubAPITest.ui;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -46,6 +50,9 @@ public class UserPage extends Fragment {
     Retrofit retrofit;
 
     Call<Github> callUser;
+    Call<List<Github>> callFollowers;
+    Call<List<Github>> callFollowing;
+    Call<List<Github>> callRepo;
 
     public UserPage() {
         super();
@@ -62,7 +69,7 @@ public class UserPage extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         //Create a retrofit call object
-        RestAPI service = retrofit.create(RestAPI.class);
+        final RestAPI service = retrofit.create(RestAPI.class);
 
         callUser = service.user(user);
         callUser.enqueue(new Callback<Github>() {
@@ -70,19 +77,85 @@ public class UserPage extends Fragment {
             public void onResponse(Call<Github> call, Response<Github> response) {
                 //Set the response to the textview
                 Github user = response.body();
-                username.setText(user.getLogin());
-                Picasso.with(getContext()).load(user.getAvatar_url()).into(avatar);
-                nameField.setText(user.getName());
-                emailField.setText(user.getEmail());
-                bioField.setText(user.getBio());
-                followingField.setText("Following: " + user.getFollowing());
-                followersField.setText("Followers: " + user.getFollowers());
-                repoNumField.setText("Repos: " + user.getPublic_repos());
+                if(user != null) {
+                    username.setText(user.getLogin());
+                    Picasso.with(getContext()).load(user.getAvatar_url()).into(avatar);
+                    nameField.setText(user.getName());
+                    emailField.setText(user.getEmail());
+                    bioField.setText(user.getBio());
+                    followingField.setText("Following: " + user.getFollowing());
+                    followersField.setText("Followers: " + user.getFollowers());
+                    repoNumField.setText("Repos: " + user.getPublic_repos());
+                } else {
+                    nameField.setText("USER DOESN'T EXIST");
+                }
             }
 
             @Override
-            public void onFailure(Call<Github> call, Throwable t) {
-                //Set the error to the textview
+            public void onFailure(Call<Github> call, Throwable t) {}
+        });
+
+        followersField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callFollowers = service.followers(user);
+                callFollowers.enqueue(new Callback<List<Github>>() {
+                @Override
+                public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
+                    //Set the response to the textview
+                    List<Github> followers = response.body();
+                    String text = "";
+                    for(Github follower : followers) {
+                        text = text + follower.getLogin() + "\n";
+                    }
+                    showSimpleDialog(text);
+                }
+
+                @Override
+                public void onFailure(Call<List<Github>> call, Throwable t) {}
+             });
+            }
+        });
+
+        followingField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callFollowing = service.following(user);
+                callFollowing.enqueue(new Callback<List<Github>>() {
+                    @Override
+                    public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
+                        //Set the response to the textview
+                        List<Github> theFollowing = response.body();
+                        String text = "";
+                        for(Github following : theFollowing) {
+                            text = text + following.getLogin() + "\n";
+                        }
+                        showSimpleDialog(text);
+                    }
+                    @Override
+                    public void onFailure(Call<List<Github>> call, Throwable t) {}
+                });
+            }
+        });
+
+        repoNumField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                callRepo = service.repos(user);
+                callRepo.enqueue(new Callback<List<Github>>() {
+                    @Override
+                    public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
+                        //Set the response to the textview
+                        List<Github> repos = response.body();
+                        String text = "";
+                        for(Github repo : repos) {
+                            text = text + repo.getName() + "\n";
+                        }
+                        showSimpleDialog(text);
+                    }
+                    @Override
+                    public void onFailure(Call<List<Github>> call, Throwable t) {}
+                });
             }
         });
     }
@@ -108,6 +181,24 @@ public class UserPage extends Fragment {
         super.onDestroyView();
         unbinder.unbind();
     }
+
+    public void showSimpleDialog(String message) {
+        // Use the Builder class for convenient dialog construction
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setCancelable(false);
+//        builder.setTitle("AlertDialog Title");
+        builder.setMessage(message);
+        builder.setPositiveButton("Dismiss", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        // Create the AlertDialog object and return it
+        builder.create().show();
+    }
+
 }
 
 

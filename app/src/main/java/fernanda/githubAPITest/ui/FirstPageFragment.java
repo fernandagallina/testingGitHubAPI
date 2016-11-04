@@ -81,10 +81,6 @@ public class FirstPageFragment extends Fragment{
             @Override
             public void onClick(View v) {
                 showInputDialog();
-//                getFragmentManager().beginTransaction()
-//                        .replace(R.id.fragment_firstpage, new UserPage())
-//                        .addToBackStack(null)
-//                        .commit();
             }
         });
     }
@@ -98,13 +94,12 @@ public class FirstPageFragment extends Fragment{
         builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                UserPage userPage = new UserPage();
-                userPage.setUsername(input.getText().toString());
-                getFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_firstpage, userPage)
-                        .addToBackStack(null)
-                        .commit();
-
+                    UserPage userPage = new UserPage();
+                    userPage.setUsername(input.getText().toString());
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_firstpage, userPage)
+                            .addToBackStack(null)
+                            .commit();
             }
         });
         builder.show();

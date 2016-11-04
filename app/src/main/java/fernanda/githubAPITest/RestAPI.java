@@ -18,8 +18,27 @@ public interface RestAPI {
             @Path("repo") String repo
     );
 
+    // Get user information
     @GET("/users/{username}")
     Call<Github> user(
+            @Path("username") String username
+    );
+
+    // Get followers of an specific user
+    @GET("/users/{username}/followers")
+    Call<List<Github>> followers(
+            @Path("username") String username
+    );
+
+    // Get people that specific user is following
+    @GET("/users/{username}/following")
+    Call<List<Github>> following(
+            @Path("username") String username
+    );
+
+    // Get user's repos
+    @GET("/users/{username}/repos")
+    Call<List<Github>> repos(
             @Path("username") String username
     );
 }
