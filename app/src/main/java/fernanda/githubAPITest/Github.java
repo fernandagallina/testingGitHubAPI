@@ -6,11 +6,19 @@ package fernanda.githubAPITest;
 
 public class Github {
 
-    String login, email, name, bio;
-    String avatar_url;
+    String login, email, name, bio, descripion;
+    String avatar_url, html_url;
     int followers, following, public_repos;
     int contributions;
     int id;
+
+    public String getDescripion() {
+        return descripion;
+    }
+
+    public String getHtml_url() {
+        return html_url;
+    }
 
     public String getBio() {
         return bio;

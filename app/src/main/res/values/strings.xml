@@ -2,5 +2,5 @@
     <string name="app_name">GitHub API Test</string>
     <string name="first_page_title">GitHub API</string>
     <string name="search_user_button">SEARCH USER</string>
-    <string name="search_repo_button">SEARCH REPO</string>
+    <string name="search_org_button">SEARCH ORGANIZATIONS</string>
 </resources>

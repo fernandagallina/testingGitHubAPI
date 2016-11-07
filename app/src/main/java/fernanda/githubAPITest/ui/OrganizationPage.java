@@ -20,50 +20,49 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-
 import fernanda.githubAPITest.App;
 import fernanda.githubAPITest.Github;
 import fernanda.githubAPITest.R;
 import fernanda.githubAPITest.RestAPI;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by fernanda on 03/11/16.
+ * Created by fernanda on 07/11/16.
  */
 
-public class UserPage extends Fragment {
+public class OrganizationPage extends Fragment {
 
-    private Unbinder unbinder;
-
-    @BindView(R.id.username) TextView username;
-    @BindView(R.id.avatar) ImageView avatar;
-    @BindView(R.id.nameField) TextView nameField;
-    @BindView(R.id.emailField) TextView emailField;
-    @BindView(R.id.bioField) TextView bioField;
-    @BindView(R.id.followersField) TextView followersField;
-    @BindView(R.id.followingField) TextView followingField;
-    @BindView(R.id.repoNumField) TextView repoNumField;
+    @BindView(R.id.orgname) TextView orgname;
+    @BindView(R.id.avatar_org) ImageView avatar;
+    @BindView(R.id.orgnameField) TextView orgnameField;
+    @BindView(R.id.htmlUrl) TextView htmlUrl;
+    @BindView(R.id.descriptionField) TextView descriptionField;
+    @BindView(R.id.orgPublicMembersField) TextView orgPublicMembersField;
+    @BindView(R.id.orgMembersField) TextView orgMembersField;
+    @BindView(R.id.publicRepoNumField) TextView repoNumField;
 
     @Inject
     Retrofit retrofit;
 
-    Call<Github> callUser;
-    Call<List<Github>> callFollowers;
-    Call<List<Github>> callFollowing;
+    Call<Github> callOrg;
+    Call<List<Github>> callMembers;
+    Call<List<Github>> callPublicMembers;
     Call<List<Github>> callRepo;
 
-    public UserPage() {
+    public OrganizationPage() {
         super();
     }
-    String user = null;
 
-    public void setUsername(String user) {
-        this.user = user;
+    String organization = null;
+
+    public void setOrgName(String organization) {
+        this.organization = organization;
     }
+
+    private Unbinder unbinder;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -72,23 +71,23 @@ public class UserPage extends Fragment {
         //Create a retrofit call object
         final RestAPI service = retrofit.create(RestAPI.class);
 
-        callUser = service.user(user);
-        callUser.enqueue(new Callback<Github>() {
+        callOrg = service.user(organization);
+        callOrg.enqueue(new Callback<Github>() {
             @Override
             public void onResponse(Call<Github> call, Response<Github> response) {
                 //Set the response to the textview
-                Github user = response.body();
-                if(user != null) {
-                    username.setText(user.getLogin());
-                    Picasso.with(getContext()).load(user.getAvatar_url()).into(avatar);
-                    nameField.setText(user.getName());
-                    emailField.setText(user.getEmail());
-                    bioField.setText(user.getBio());
-                    followingField.setText("Following: " + user.getFollowing());
-                    followersField.setText("Followers: " + user.getFollowers());
-                    repoNumField.setText("Repos: " + user.getPublic_repos());
+                Github org = response.body();
+                if(org != null) {
+                    orgname.setText(org.getLogin());
+                    Picasso.with(getContext()).load(org.getAvatar_url()).into(avatar);
+                    orgnameField.setText(org.getName());
+                    htmlUrl.setText(org.getHtml_url());
+                    descriptionField.setText(org.getDescripion());
+                    orgMembersField.setText("Members");
+                    orgPublicMembersField.setText("Public Members");
+                    repoNumField.setText("Public repos: " + org.getPublic_repos());
                 } else {
-                    nameField.setText("USER DOESN'T EXIST");
+                    orgnameField.setText("ORGANIZATION DOESN'T EXIST");
                 }
             }
 
@@ -96,33 +95,33 @@ public class UserPage extends Fragment {
             public void onFailure(Call<Github> call, Throwable t) {}
         });
 
-        followersField.setOnClickListener(new View.OnClickListener() {
+        orgMembersField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callFollowers = service.followers(user);
-                callFollowers.enqueue(new Callback<List<Github>>() {
-                @Override
-                public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
-                    //Set the response to the textview
-                    List<Github> followers = response.body();
-                    String text = "";
-                    for(Github follower : followers) {
-                        text = text + follower.getLogin() + "\n";
+                callMembers = service.orgMembers(organization);
+                callMembers.enqueue(new Callback<List<Github>>() {
+                    @Override
+                    public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
+                        //Set the response to the textview
+                        List<Github> followers = response.body();
+                        String text = "";
+                        for(Github follower : followers) {
+                            text = text + follower.getLogin() + "\n";
+                        }
+                        showSimpleDialog("Members", text);
                     }
-                    showSimpleDialog("Followers", text);
-                }
 
-                @Override
-                public void onFailure(Call<List<Github>> call, Throwable t) {}
-             });
+                    @Override
+                    public void onFailure(Call<List<Github>> call, Throwable t) {}
+                });
             }
         });
 
-        followingField.setOnClickListener(new View.OnClickListener() {
+        orgPublicMembersField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callFollowing = service.following(user);
-                callFollowing.enqueue(new Callback<List<Github>>() {
+                callPublicMembers = service.orgPublicMembers(organization);
+                callPublicMembers.enqueue(new Callback<List<Github>>() {
                     @Override
                     public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
                         //Set the response to the textview
@@ -131,7 +130,7 @@ public class UserPage extends Fragment {
                         for(Github following : theFollowing) {
                             text = text + following.getLogin() + "\n";
                         }
-                        showSimpleDialog("Following", text);
+                        showSimpleDialog("Public Members", text);
                     }
                     @Override
                     public void onFailure(Call<List<Github>> call, Throwable t) {}
@@ -142,7 +141,7 @@ public class UserPage extends Fragment {
         repoNumField.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callRepo = service.repos(user);
+                callRepo = service.reposOrg(organization);
                 callRepo.enqueue(new Callback<List<Github>>() {
                     @Override
                     public void onResponse(Call<List<Github>> call, Response<List<Github>> response) {
@@ -164,7 +163,7 @@ public class UserPage extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_user, container, false);
+        View view = inflater.inflate(R.layout.fragment_org, container, false);
         unbinder = ButterKnife.bind(this, view);
 
         return view;
