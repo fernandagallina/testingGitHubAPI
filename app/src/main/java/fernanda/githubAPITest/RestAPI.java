@@ -41,4 +41,28 @@ public interface RestAPI {
     Call<List<Github>> repos(
             @Path("username") String username
     );
+
+    // Get organization information
+    @GET("/orgs/{orgname}")
+    Call<Github> org(
+            @Path("orgname") String orgname
+    );
+
+    // Get organization's members
+    @GET("/orgs/{orgname}/members")
+    Call<List<Github>> orgMembers(
+            @Path("orgname") String orgname
+    );
+
+    // Get organization's public members
+    @GET("/orgs/{orgname}/public_members")
+    Call<List<Github>> orgPublicMembers(
+            @Path("orgname") String orgname
+    );
+
+    // Get organization's repos
+    @GET("/orgs/{orgname}/repos")
+    Call<List<Github>> reposOrg(
+            @Path("orgname") String orgname
+    );
 }

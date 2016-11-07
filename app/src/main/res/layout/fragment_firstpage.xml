@@ -43,16 +43,18 @@
             android:textColor="@color/colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="@string/search_user_button"/>
 
         <Button
             android:layout_marginTop="30dp"
-            android:id="@+id/search_repo_button"
+            android:id="@+id/search_org_button"
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/colorAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/search_repo_button"/>
+            android:layout_gravity="center"
+            android:text="@string/search_org_button"/>
 
     </LinearLayout>
 
