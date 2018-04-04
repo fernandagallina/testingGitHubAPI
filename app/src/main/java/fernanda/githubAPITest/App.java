@@ -2,14 +2,10 @@ package fernanda.githubAPITest;
 
 import android.app.Application;
 
-import fernanda.githubAPITest.dagger.component.DaggerNetComponent;
-import fernanda.githubAPITest.dagger.component.NetComponent;
-import fernanda.githubAPITest.dagger.module.AppModule;
-import fernanda.githubAPITest.dagger.module.NetModule;
-
-/**
- * Created by fernanda on 03/11/16.
- */
+import fernanda.githubAPITest.injections.component.DaggerNetComponent;
+import fernanda.githubAPITest.injections.component.NetComponent;
+import fernanda.githubAPITest.injections.module.AppModule;
+import fernanda.githubAPITest.injections.module.NetModule;
 
 public class App extends Application {
 
@@ -29,6 +25,4 @@ public class App extends Application {
     public NetComponent getNetComponent() {
         return mNetComponent;
     }
-
-
 }

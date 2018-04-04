@@ -24,10 +24,10 @@ import fernanda.githubAPITest.R;
 
 public class FirstPageFragment extends Fragment{
 
-    @BindView(R.id.search_org_button)
+    @BindView(R.id.mainSearchOrganizationBtn)
     Button searchOrgButton;
 
-    @BindView(R.id.search_user_button)
+    @BindView(R.id.mainSearchUserBtn)
     Button searchUserButton;
 
     private Unbinder unbinder;
@@ -55,12 +55,12 @@ public class FirstPageFragment extends Fragment{
 
     }
 
-    @OnClick(R.id.search_user_button)
+    @OnClick(R.id.mainSearchUserBtn)
     public void searchUser() {
         showInputDialog("user");
     }
 
-    @OnClick(R.id.search_org_button)
+    @OnClick(R.id.mainSearchOrganizationBtn)
     public void searchOrganization() {
         showInputDialog("org");
     }
@@ -75,10 +75,10 @@ public class FirstPageFragment extends Fragment{
             builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    UserPage userPage = new UserPage();
+                    UserPageFragment userPage = new UserPageFragment();
                     userPage.setUsername(input.getText().toString());
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_firstpage, userPage)
+                            .replace(R.id.activity_main, userPage)
                             .addToBackStack(null)
                             .commit();
                 }
@@ -88,10 +88,10 @@ public class FirstPageFragment extends Fragment{
             builder.setPositiveButton("Go", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    OrganizationPage organizationPage = new OrganizationPage();
+                    OrganizationPageFragment organizationPage = new OrganizationPageFragment();
                     organizationPage.setOrgName(input.getText().toString());
                     getFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_firstpage, organizationPage)
+                            .replace(R.id.activity_main, organizationPage)
                             .addToBackStack(null)
                             .commit();
                 }
